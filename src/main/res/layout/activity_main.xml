@@ -1,23 +1,61 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical" >
+              xmlns:noprom="http://schemas.android.com/apk/res/com.noprom.app"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
     <android.support.v4.view.ViewPager
         android:id="@+id/id_viewpager"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1" >
+        android:layout_weight="1">
     </android.support.v4.view.ViewPager>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:background="@drawable/tab_bg"
-        android:orientation="horizontal" >
+        android:orientation="horizontal">
 
+        <com.noprom.app.ChangeColorIconWithText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            noprom:color="#ff45c01a"
+            noprom:icon="@drawable/ic_menu_start_conversation"
+            noprom:text="@string/app_name"
+            noprom:text_size="12sp"/>
 
+        <com.noprom.app.ChangeColorIconWithText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            noprom:color="#ff45c01a"
+            noprom:icon="@drawable/ic_menu_friendslist"
+            noprom:text="@string/tab_contact"
+            noprom:text_size="12sp"/>
+
+        <com.noprom.app.ChangeColorIconWithText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            noprom:color="#ff45c01a"
+            noprom:icon="@drawable/ic_menu_emoticons"
+            noprom:text="@string/tab_found"
+            noprom:text_size="12sp"/>
+
+        <com.noprom.app.ChangeColorIconWithText
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:padding="5dp"
+            noprom:color="#ff45c01a"
+            noprom:icon="@drawable/ic_menu_allfriends"
+            noprom:text="@string/tab_me"
+            noprom:text_size="12sp"/>
     </LinearLayout>
 
 </LinearLayout>
