@@ -5,6 +5,8 @@ import android.content.res.TypedArray;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
 import android.util.AttributeSet;
@@ -27,7 +29,7 @@ public class ChangeColorIconWithText extends View {
     private Bitmap mBitmap;
     private Paint mPaint;
 
-    private int mAlpha; // 透明度
+    private float mAlpha = 1.0f; // 透明度
     private Rect mIconRect;
     private Rect mTextBound;
 
@@ -90,5 +92,58 @@ public class ChangeColorIconWithText extends View {
 
     }
 
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
 
+        // icon的宽度
+        int iconWidth = Math.min(getMeasuredWidth() - getPaddingLeft() - getPaddingRight(), getMeasuredHeight() - getPaddingTop() - getPaddingBottom() - mTextBound.height());
+        // 绘制的左边缘距离
+        int left = getMeasuredWidth() / 2 - iconWidth / 2;
+        // 绘制的上边缘距离
+        int top = (getMeasuredHeight() - mTextBound.height()) / 2 - iconWidth / 2;
+        // 图标对应的矩形
+        mIconRect = new Rect(left, top, left + iconWidth, top + iconWidth);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        canvas.drawBitmap(mIconBitmap, null, mIconRect, null);
+
+        int alpha = (int) Math.ceil(255 * mAlpha);
+        // 在内存里面准备mBitmap,setAlpha,绘制纯色,xfermode,绘制图标
+        setupTargetBitmap(alpha);
+
+        // 绘制图标
+        canvas.drawBitmap(mBitmap,0,0,null);
+    }
+
+    /**
+     * 在内存中绘制可变色的icon
+     *
+     * @param alpha
+     */
+    private void setupTargetBitmap(int alpha) {
+
+        mBitmap = Bitmap.createBitmap(getMeasuredWidth(), getMeasuredHeight(), Bitmap.Config.ARGB_8888);
+        mCanvas = new Canvas(mBitmap);
+
+        // 准备mPaint
+        mPaint = new Paint();
+        mPaint.setColor(mColor);
+        mPaint.setAntiAlias(true);
+        mPaint.setDither(true);
+        mPaint.setAlpha(alpha);
+
+        // 绘制纯色
+        mCanvas.drawRect(mIconRect, mPaint);
+
+        // 设置xfermode
+        mPaint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_IN));
+
+        mPaint.setAlpha(255);
+        // 绘制图标
+        mCanvas.drawBitmap(mIconBitmap, null, mIconRect, mPaint);
+
+    }
 }
