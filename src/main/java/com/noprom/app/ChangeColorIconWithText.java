@@ -9,6 +9,7 @@ import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
 import android.graphics.Rect;
 import android.graphics.drawable.BitmapDrawable;
+import android.os.Looper;
 import android.util.AttributeSet;
 import android.util.TypedValue;
 import android.view.View;
@@ -29,7 +30,7 @@ public class ChangeColorIconWithText extends View {
     private Bitmap mBitmap;
     private Paint mPaint;
 
-    private float mAlpha = 1.0f; // 透明度
+    private float mAlpha; // 透明度
     private Rect mIconRect;
     private Rect mTextBound;
 
@@ -114,8 +115,48 @@ public class ChangeColorIconWithText extends View {
         // 在内存里面准备mBitmap,setAlpha,绘制纯色,xfermode,绘制图标
         setupTargetBitmap(alpha);
 
+        // 绘制文本
+        // 1.绘制原文本 2.绘制变色的文本
+
+        drawSourceText(canvas, alpha);
+        drawTargetText(canvas, alpha);
+
         // 绘制图标
-        canvas.drawBitmap(mBitmap,0,0,null);
+        canvas.drawBitmap(mBitmap, 0, 0, null);
+    }
+
+    /**
+     * 绘制变色的文本
+     *
+     * @param canvas
+     * @param alpha
+     */
+    private void drawTargetText(Canvas canvas, int alpha) {
+        mTextPaint.setColor(mColor);
+        mTextPaint.setAlpha(alpha);
+
+        // 距离左侧绘制坐标
+        int x = getMeasuredWidth() / 2 - mTextBound.width() / 2;
+        // 距离上部绘制坐标
+        int y = mIconRect.bottom + mTextBound.height();
+        canvas.drawText(mText, x, y, mTextPaint);
+    }
+
+    /**
+     * 绘制原文本
+     *
+     * @param canvas
+     * @param alpha
+     */
+    private void drawSourceText(Canvas canvas, int alpha) {
+        mTextPaint.setColor(0xff333333);
+        mTextPaint.setAlpha(255 - alpha);
+
+        // 距离左侧绘制坐标
+        int x = getMeasuredWidth() / 2 - mTextBound.width() / 2;
+        // 距离上部绘制坐标
+        int y = mIconRect.bottom + mTextBound.height();
+        canvas.drawText(mText, x, y, mTextPaint);
     }
 
     /**
@@ -144,6 +185,30 @@ public class ChangeColorIconWithText extends View {
         mPaint.setAlpha(255);
         // 绘制图标
         mCanvas.drawBitmap(mIconBitmap, null, mIconRect, mPaint);
+
+    }
+
+    /**
+     * 设置图标透明度
+     *
+     * @param alpha 透明度
+     */
+    public void setIconAlpha(float alpha) {
+        this.mAlpha = alpha;
+        invalidateView();
+    }
+
+    /**
+     * 重绘
+     */
+    private void invalidateView() {
+        if (Looper.getMainLooper() == Looper.myLooper()) {
+            // UI线程
+            invalidate();
+        } else {
+            // 非UI线程
+            postInvalidate();
+        }
 
     }
 }

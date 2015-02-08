@@ -18,6 +18,7 @@
         android:orientation="horizontal">
 
         <com.noprom.app.ChangeColorIconWithText
+            android:id="@+id/id_indicator_one"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -28,6 +29,8 @@
             noprom:text_size="12sp"/>
 
         <com.noprom.app.ChangeColorIconWithText
+            android:id="@+id/id_indicator_two"
+
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -38,6 +41,7 @@
             noprom:text_size="12sp"/>
 
         <com.noprom.app.ChangeColorIconWithText
+            android:id="@+id/id_indicator_three"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -48,6 +52,7 @@
             noprom:text_size="12sp"/>
 
         <com.noprom.app.ChangeColorIconWithText
+            android:id="@+id/id_indicator_four"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"

@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.view.Menu;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
 
@@ -16,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-public class MainActivity extends FragmentActivity{
+public class MainActivity extends FragmentActivity implements View.OnClickListener, ViewPager.OnPageChangeListener {
 
     private ViewPager mViewPager;
     private List<Fragment> mTabs = new ArrayList<Fragment>();
@@ -27,6 +28,8 @@ public class MainActivity extends FragmentActivity{
             "第四个Fragment"
     };
     private FragmentPagerAdapter mAdapter;
+
+    private List<ChangeColorIconWithText> mTabIndicators = new ArrayList<ChangeColorIconWithText>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,16 +47,26 @@ public class MainActivity extends FragmentActivity{
 
         // 设置适配器
         mViewPager.setAdapter(mAdapter);
+
+        // 处理所有事件
+        initEvent();
+    }
+
+    /**
+     * 处理所有事件
+     */
+    private void initEvent() {
+        mViewPager.setOnPageChangeListener(this);
     }
 
     /**
      * 初始化数据
      */
     private void initDatas() {
-        for (String title : mTitles){
+        for (String title : mTitles) {
             TabFragment tabFragment = new TabFragment();
             Bundle bundle = new Bundle();
-            bundle.putString(TabFragment.TITLE,title);
+            bundle.putString(TabFragment.TITLE, title);
             tabFragment.setArguments(bundle);
             mTabs.add(tabFragment);
         }
@@ -70,6 +83,8 @@ public class MainActivity extends FragmentActivity{
                 return mTabs.size();
             }
         };
+
+
     }
 
     /**
@@ -77,6 +92,23 @@ public class MainActivity extends FragmentActivity{
      */
     private void initView() {
         mViewPager = (ViewPager) findViewById(R.id.id_viewpager);
+        ChangeColorIconWithText one = (ChangeColorIconWithText) findViewById(R.id.id_indicator_one);
+        ChangeColorIconWithText two = (ChangeColorIconWithText) findViewById(R.id.id_indicator_two);
+        ChangeColorIconWithText three = (ChangeColorIconWithText) findViewById(R.id.id_indicator_three);
+        ChangeColorIconWithText four = (ChangeColorIconWithText) findViewById(R.id.id_indicator_four);
+        mTabIndicators.add(one);
+        mTabIndicators.add(two);
+        mTabIndicators.add(three);
+        mTabIndicators.add(four);
+
+        // 设置点击事件
+        one.setOnClickListener(this);
+        two.setOnClickListener(this);
+        three.setOnClickListener(this);
+        four.setOnClickListener(this);
+
+        // 初始化第一个的透明度
+        one.setIconAlpha(1.0f);
     }
 
 
@@ -130,5 +162,65 @@ public class MainActivity extends FragmentActivity{
             }
         }
         return super.onMenuOpened(featureId, menu);
+    }
+
+    @Override
+    public void onClick(View view) {
+        // 清除其他选项的颜色
+        resetOtherTabs();
+        // 设置当前选项的颜色
+        switch (view.getId()) {
+            case R.id.id_indicator_one:
+                mTabIndicators.get(0).setIconAlpha(1.0f);
+                mViewPager.setCurrentItem(0, false);
+                break;
+            case R.id.id_indicator_two:
+                mTabIndicators.get(1).setIconAlpha(1.0f);
+                mViewPager.setCurrentItem(1, false);
+                break;
+            case R.id.id_indicator_three:
+                mTabIndicators.get(2).setIconAlpha(1.0f);
+                mViewPager.setCurrentItem(2, false);
+                break;
+            case R.id.id_indicator_four:
+                mTabIndicators.get(3).setIconAlpha(1.0f);
+                mViewPager.setCurrentItem(3, false);
+                break;
+
+        }
+    }
+
+    /**
+     * 清除其他选项的颜色
+     */
+    private void resetOtherTabs() {
+        for (int i = 0; i < mTabIndicators.size(); i++) {
+            mTabIndicators.get(i).setIconAlpha(0);
+        }
+    }
+
+    @Override
+    public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+//        Log.d("TAG", "position = " + position + ",positionOffset = " + positionOffset + ",positionOffsetPixels = " + positionOffsetPixels);
+
+        if (positionOffset > 0) {
+            ChangeColorIconWithText left = mTabIndicators.get(position);
+            ChangeColorIconWithText right = mTabIndicators.get(position + 1);
+
+            // 透明度逐渐减弱
+            left.setIconAlpha(1 - positionOffset);
+            // 透明度逐渐增强
+            right.setIconAlpha(positionOffset);
+        }
+    }
+
+    @Override
+    public void onPageSelected(int position) {
+
+    }
+
+    @Override
+    public void onPageScrollStateChanged(int position) {
+
     }
 }
